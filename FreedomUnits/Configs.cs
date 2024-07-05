@@ -12,6 +12,14 @@ namespace FreedomUnits
         private static readonly FieldInfo viewField = AccessTools.Field(typeof(PlayerHUD), "view");
         private static readonly FieldInfo temperatureField = AccessTools.Field(typeof(LocalPlayerHUDView), "temperature");
 
+        internal static ConfigEntry<TemperatureUnit> TemperatureUnitConfig;
+        internal static ConfigEntry<float> TemperatureMultiplier;
+        internal static ConfigEntry<float> TemperatureAddend;
+
+        internal static ConfigEntry<SpeedUnit> SpeedUnitConfig;
+        internal static ConfigEntry<float> SpeedMultiplier;
+        internal static ConfigEntry<string> SpeedName;
+
         internal enum TemperatureUnit
         {
             Celsius,
@@ -24,9 +32,16 @@ namespace FreedomUnits
             Custom
         }
 
-        internal static ConfigEntry<TemperatureUnit> TemperatureUnitConfig;
-        internal static ConfigEntry<float> TemperatureMultiplier;
-        internal static ConfigEntry<float> TemperatureAddend;
+        internal enum SpeedUnit
+        {
+            ms,
+            kmh,
+            mih,
+            kt,
+            fts,
+            C,
+            Custom
+        }
 
         internal static float GetTemperature(float celsius)
         {
@@ -60,11 +75,45 @@ namespace FreedomUnits
             });
         }
 
+        internal static float GetSpeed(float ms)
+        {
+            return SpeedUnitConfig.Value switch
+            {
+                SpeedUnit.ms => ms,
+                SpeedUnit.kmh => ms*3.6f,
+                SpeedUnit.mih => ms*2.23693629f,
+                SpeedUnit.kt => ms*1.94384449f,
+                SpeedUnit.fts => ms*3.2808399f,
+                SpeedUnit.C => ms/299792458f,
+                SpeedUnit.Custom => ms*SpeedMultiplier.Value,
+                _ => ms
+            };
+        }
+
+        internal static string GetSpeedUnit()
+        {
+            return SpeedUnitConfig.Value switch
+            {
+                SpeedUnit.ms => "m/s",
+                SpeedUnit.kmh => "km/h",
+                SpeedUnit.mih => "mi/h",
+                SpeedUnit.kt => "kt",
+                SpeedUnit.fts => "ft/s",
+                SpeedUnit.C => "C",
+                SpeedUnit.Custom => SpeedName.Value,
+                _ => ""
+            };
+        }
+
         internal static void Load(BepinPlugin plugin)
         {
             TemperatureUnitConfig = plugin.Config.Bind("FreedomUnits", "Temperature", TemperatureUnit.Celsius);
             TemperatureMultiplier = plugin.Config.Bind("FreedomUnits", "TemperatureMultiplier", 1f);
             TemperatureAddend = plugin.Config.Bind("FreedomUnits", "TemperatureAddend", 0f);
+
+            SpeedUnitConfig = plugin.Config.Bind("FreedomUnits", "Speed", SpeedUnit.ms);
+            SpeedMultiplier = plugin.Config.Bind("FreedomUnits", "SpeedMultiplier", 1f);
+            SpeedName = plugin.Config.Bind("FreedomUnits", "SpeedUnit", "m/s");
         }
     }
 }

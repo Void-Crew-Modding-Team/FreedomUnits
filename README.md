@@ -4,7 +4,7 @@
 
 # FreedomUnits
 
-Version 0.0.0  
+Version 0.0.1  
 For Game Version 0.26.2  
 Developed by 18107  
 Requires VoidManager 1.1.4
@@ -12,7 +12,7 @@ Requires VoidManager 1.1.4
 
 ---------------------
 
-### 💡 Function - Allows the user to see the temperature in any units
+### 💡 Function - Allows the user to see the temperature and ship speed in any units
 
 - Does not change the °C icon
 

@@ -8,6 +8,6 @@ namespace FreedomUnits
 
         public override string Author => "18107";
 
-        public override string Description => "Allows the user to see the temperature in any units";
+        public override string Description => "Allows the user to see the temperature or ship speed in any units";
     }
 }

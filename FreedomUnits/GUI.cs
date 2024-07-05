@@ -9,11 +9,15 @@ namespace FreedomUnits
         private static string Multiplier = Configs.TemperatureMultiplier.Value.ToString();
         private static string Addend = Configs.TemperatureAddend.Value.ToString();
 
+        private static string SpeedMultiplier = Configs.SpeedMultiplier.Value.ToString();
+        private static string SpeedName = Configs.SpeedName.Value;
+
         public override string Name() => "Freedom Units";
 
         public override void Draw()
         {
             bool changed = false;
+            Label("Temperature");
             changed |= DrawCheckbox("Celsius", Configs.TemperatureUnit.Celsius);
             changed |= DrawCheckbox("Fahrenheit", Configs.TemperatureUnit.Fahrenheit);
             changed |= DrawCheckbox("Kelvin", Configs.TemperatureUnit.Kelvin);
@@ -56,6 +60,39 @@ namespace FreedomUnits
             {
                 Configs.SetTemperatureThresholds();
             }
+
+            Label("");
+            Label("Speed");
+            DrawCheckbox("Meters per second", Configs.SpeedUnit.ms);
+            DrawCheckbox("Kilometers per hour", Configs.SpeedUnit.kmh);
+            DrawCheckbox("Miles per hour", Configs.SpeedUnit.mih);
+            DrawCheckbox("Knots", Configs.SpeedUnit.kt);
+            DrawCheckbox("Feet per second", Configs.SpeedUnit.fts);
+            DrawCheckbox("% speed of light", Configs.SpeedUnit.C);
+            BeginHorizontal();
+            DrawCheckbox("Custom: ", Configs.SpeedUnit.Custom);
+            Label("Multiplier: ");
+            SpeedMultiplier = TextField(SpeedMultiplier, MinWidth(80));
+            Label("  Unit");
+            SpeedName = TextField(SpeedName, MinWidth(80));
+            FlexibleSpace();
+            if (Button("Apply"))
+            {
+                if (float.TryParse(SpeedMultiplier, out float mul))
+                {
+                    Configs.SpeedMultiplier.Value = mul;
+                }
+                SpeedMultiplier = Configs.SpeedMultiplier.Value.ToString();
+                Configs.SpeedName.Value = SpeedName;
+            }
+            if (Button("Reset"))
+            {
+                Configs.SpeedMultiplier.Value = 1;
+                Configs.SpeedName.Value = "m/s";
+                SpeedMultiplier = Configs.SpeedMultiplier.Value.ToString();
+                SpeedName = Configs.SpeedName.Value;
+            }
+            EndHorizontal();
         }
 
         private static bool DrawCheckbox(string name, Configs.TemperatureUnit unit)
@@ -67,6 +104,15 @@ namespace FreedomUnits
                 return true;
             }
             return false;
+        }
+
+        private static void DrawCheckbox(string name, Configs.SpeedUnit unit)
+        {
+            bool refBool = Configs.SpeedUnitConfig.Value == unit;
+            if (GUITools.DrawCheckbox(name, ref refBool))
+            {
+                Configs.SpeedUnitConfig.Value = unit;
+            }
         }
     }
 }
